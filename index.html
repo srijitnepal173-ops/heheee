@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Lock Screen 💖</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@200;300;400&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background: radial-gradient(circle at top, #2d1b69, #0a0612);
+  font-family:'Josefin Sans',sans-serif;
+  overflow:hidden;
+  color:white;
+}
+
+/* background glow */
+.glow{
+  position:absolute;
+  width:300px;
+  height:300px;
+  background:radial-gradient(circle, rgba(255,79,163,0.25), transparent 70%);
+  border-radius:50%;
+  animation:pulse 3s infinite;
+}
+@keyframes pulse{
+  0%,100%{transform:scale(1)}
+  50%{transform:scale(1.3)}
+}
+
+/* phone container */
+.phone{
+  width:320px;
+  max-width:90%;
+  background:rgba(255,255,255,0.06);
+  border:1px solid rgba(255,255,255,0.15);
+  border-radius:30px;
+  padding:30px 20px;
+  text-align:center;
+  backdrop-filter: blur(12px);
+  box-shadow:0 0 50px rgba(255,64,160,0.25);
+  position:relative;
+}
+
+/* lock icon */
+.lock{
+  font-size:40px;
+  margin-bottom:10px;
+  animation:float 2s ease-in-out infinite;
+}
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-6px)}
+}
+
+/* title */
+.title{
+  font-size:14px;
+  letter-spacing:4px;
+  color:#ff9ad5;
+  margin-bottom:15px;
+  text-transform:uppercase;
+}
+
+/* dots display */
+.dots{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:25px;
+}
+.dot{
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:1px solid #ff4fa3;
+  background:transparent;
+  transition:0.3s;
+}
+.dot.filled{
+  background:#ff4fa3;
+  box-shadow:0 0 10px #ff4fa3;
+}
+
+/* keypad */
+.keypad{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:12px;
+}
+
+.key{
+  width:70px;
+  height:70px;
+  border-radius:50%;
+  background:rgba(255,255,255,0.08);
+  border:1px solid rgba(255,255,255,0.15);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:20px;
+  cursor:pointer;
+  transition:0.2s;
+  user-select:none;
+}
+
+.key:active{
+  transform:scale(0.9);
+  background:rgba(255,79,163,0.2);
+}
+
+/* special keys */
+.special{
+  font-size:14px;
+  color:#ff9ad5;
+}
+
+/* shake animation */
+.shake{
+  animation:shake 0.4s;
+}
+@keyframes shake{
+  0%{transform:translateX(0)}
+  25%{transform:translateX(-8px)}
+  50%{transform:translateX(8px)}
+  75%{transform:translateX(-6px)}
+  100%{transform:translateX(0)}
+}
+
+/* unlock animation */
+.unlock{
+  animation:unlock 0.6s ease;
+}
+@keyframes unlock{
+  0%{transform:scale(1)}
+  50%{transform:scale(1.1);filter:brightness(2)}
+  100%{transform:scale(1)}
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow"></div>
+
+<div class="phone" id="phone">
+
+  <div class="lock">🔐</div>
+  <div class="title">Enter Passcode</div>
+
+  <div class="dots" id="dots">
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+    <div class="dot"></div>
+  </div>
+
+  <div class="keypad">
+
+    <div class="key" onclick="press(1)">1</div>
+    <div class="key" onclick="press(2)">2</div>
+    <div class="key" onclick="press(3)">3</div>
+
+    <div class="key" onclick="press(4)">4</div>
+    <div class="key" onclick="press(5)">5</div>
+    <div class="key" onclick="press(6)">6</div>
+
+    <div class="key" onclick="press(7)">7</div>
+    <div class="key" onclick="press(8)">8</div>
+    <div class="key" onclick="press(9)">9</div>
+
+    <div class="key special" onclick="del()">⌫</div>
+    <div class="key" onclick="press(0)">0</div>
+    <div class="key special" onclick="check()">✔</div>
+
+  </div>
+
+</div>
+
+<script>
+
+let input = "";
+
+// update dots
+function updateDots(){
+  let dots = document.querySelectorAll(".dot");
+  dots.forEach((d,i)=>{
+    if(i < input.length){
+      d.classList.add("filled");
+    } else {
+      d.classList.remove("filled");
+    }
+  });
+}
+
+// number press
+function press(num){
+  if(input.length < 4){
+    input += num;
+    updateDots();
+  }
+}
+
+// delete
+function del(){
+  input = input.slice(0,-1);
+  updateDots();
+}
+
+// check PIN
+function check(){
+  const phone = document.getElementById("phone");
+
+  if(input === "0128"){
+    phone.classList.add("unlock");
+
+    setTimeout(()=>{
+      window.location.href="index.html";
+    },800);
+
+  } else {
+    phone.classList.remove("shake");
+    void phone.offsetWidth;
+    phone.classList.add("shake");
+    input = "";
+    updateDots();
+  }
+}
+
+// floating hearts (background)
+for(let i=0;i<15;i++){
+  let h=document.createElement("div");
+  h.innerHTML="💖";
+  h.style.position="absolute";
+  h.style.left=Math.random()*100+"vw";
+  h.style.top=Math.random()*100+"vh";
+  h.style.opacity="0.3";
+  h.style.fontSize=(10+Math.random()*20)+"px";
+  h.style.animation="float 6s linear infinite";
+  document.body.appendChild(h);
+}
+
+</script>
+
+</body>
+</html>
